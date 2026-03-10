@@ -30,7 +30,7 @@ export default function HeroSection() {
 
       // Set initial car state fully off-screen left
       gsap.set(carWrapperRef.current, {
-        x: "-60vw",
+        x: "-70vw",
         y: 0,
         scale: 0.9,
         rotation: 0,
@@ -42,24 +42,26 @@ export default function HeroSection() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",
-          end: "+=2200", // Pinned duration extended for slower, smoother motion
-          scrub: 1,      // Smooth scrubbing
+          end: "+=2500", // Pinned duration extended for 4 distinct fluid stages
+          scrub: 1.5,    // Much slower and smoother scrubbing delay
           pin: true,     // Pin the entire section
         }
       });
 
       // Stage 1: Car entering slowly from left
       masterTl.to(carWrapperRef.current, {
-        x: "-20vw",
+        x: "0vw",
         scale: 0.95,
+        rotation: 0.5, // Simulate very slight suspension bump on entry
         duration: 2,
         ease: "power1.inOut"
       })
 
-        // Stage 2 Start: Car moving toward center slowly
+        // Stage 2 Start: Car reaches the center area
         .to(carWrapperRef.current, {
-          x: "10vw",
+          x: "5vw",
           scale: 1,
+          rotation: 0, // leveling out
           duration: 2,
           ease: "none"
         })
@@ -79,13 +81,22 @@ export default function HeroSection() {
           stagger: 0.2,
         }, "<0.5") // Slightly overlap with text finishing
 
-        // Stage 3: Car peels out slowly to the right
+        // Stage 3: Car continues moving slowly to the right
         .to(carWrapperRef.current, {
-          x: "40vw",
+          x: "35vw",
           scale: 1.05,
+          rotation: -0.5, // simulate load driving back tires down into Stage 4
           duration: 2,
           ease: "power1.inOut"
-        }, ">"); // Starts after previous text/car sync block finishes
+        }, ">") // Starts after previous text/car sync block finishes
+
+        // Stage 4: Car settles toward the right side
+        .to(carWrapperRef.current, {
+          x: "50vw",
+          rotation: 0, // flatten out completely at the end
+          duration: 1.5,
+          ease: "power2.out"
+        });
 
     },
     { scope: containerRef }
