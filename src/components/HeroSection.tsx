@@ -8,6 +8,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import BackgroundParticles from "./BackgroundParticles";
 import StatsSection from "./StatsSection";
 
+import carImage from "../../public/car.png";
+
 gsap.registerPlugin(ScrollTrigger);
 
 const HEADLINE_TEXT = "WELCOME ITZ FIZZ";
@@ -157,7 +159,7 @@ export default function HeroSection() {
           className="relative w-full aspect-[21/9] will-change-transform flex-shrink-0"
         >
           <Image
-            src="/car.png"
+            src={carImage}
             alt="Premium Scroll Object"
             fill
             priority
