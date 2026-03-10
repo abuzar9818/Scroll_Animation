@@ -11,47 +11,70 @@ export default function BackgroundParticles() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    const shapes = gsap.utils.toArray<HTMLElement>(".bg-shape");
-
-    // 1. Initial floating animation (ambient)
-    shapes.forEach((shape, index) => {
-      gsap.to(shape, {
-        x: () => gsap.utils.random(-100, 100),
-        y: () => gsap.utils.random(-100, 100),
-        rotation: () => gsap.utils.random(-45, 45),
-        duration: () => gsap.utils.random(10, 20),
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-
-      // 2. Parallax effect based on scroll (scrubbed)
-      // Different objects move at slightly different y-speeds based on index for true depth parallax
-      gsap.to(shape, {
+    // 1. Road Grid Motion (Moving downward to simulate ground rolling closer)
+    const grid = containerRef.current?.querySelector(".abstract-road-grid");
+    if (grid) {
+      gsap.to(grid, {
         scrollTrigger: {
           trigger: document.body,
           start: "top top",
-          end: "bottom bottom",
-          scrub: 1, // Smooth scrub
+          end: "+=1500",
+          scrub: 1,
         },
-        y: -100, // Move slower than scroll exactly -100px up
+        y: "20vh", // The ground grid moves down/closer
+        scale: 1.2, // and wider
+        ease: "none",
+      });
+    }
+
+    // 2. Streaks of light zipping by (simulating horizontal/forward velocity blur)
+    const streaks = gsap.utils.toArray<HTMLElement>(".light-streak");
+    streaks.forEach((streak) => {
+      // Ambient zip-by continuously
+      gsap.to(streak, {
+        x: () => (Math.random() > 0.5 ? "150vw" : "-150vw"),
+        duration: () => gsap.utils.random(1.5, 3),
+        repeat: -1,
+        ease: "power1.inOut",
+        delay: () => gsap.utils.random(0, 2),
+      });
+
+      // Also stretch and blur more on scroll
+      gsap.to(streak, {
+        scrollTrigger: {
+          trigger: document.body,
+          start: "top top",
+          end: "+=1500",
+          scrub: 0.5,
+        },
+        scaleX: 3,
+        opacity: 0.8,
         ease: "none",
       });
     });
+
   }, { scope: containerRef });
 
   return (
     <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {/* Deep dark gradient overlay to ensure text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/80 z-10" />
+      {/* Deep dark gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-transparent z-10" />
 
-      {/* Shapes with will-change for performance */}
-      <div className="bg-shape absolute top-[20%] left-[10%] w-[30vw] h-[30vw] min-w-[300px] min-h-[300px] bg-indigo-900/30 rounded-full blur-[100px] will-change-transform" />
-      <div className="bg-shape absolute top-[40%] right-[10%] w-[40vw] h-[40vw] min-w-[400px] min-h-[400px] bg-purple-900/20 rounded-full blur-[120px] will-change-transform" />
-      <div className="bg-shape absolute bottom-[-10%] left-[30%] w-[50vw] h-[50vw] min-w-[500px] min-h-[500px] bg-neutral-800/40 rounded-full blur-[150px] will-change-transform" />
-      
-      {/* Subtle grid pattern for premium tech feel */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] z-0 opacity-50" />
+      {/* Abstract Road Grid mapping perspective to the bottom */}
+      <div 
+        className="abstract-road-grid absolute bottom-0 left-[-50vw] right-[-50vw] h-[60vh] opacity-30 origin-bottom will-change-transform"
+        style={{
+          backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+          backgroundSize: "4rem 4rem",
+          transform: "perspective(1000px) rotateX(75deg)"
+        }}
+      />
+
+      {/* Velocity Streaks (Light Trails) */}
+      <div className="light-streak absolute top-[30%] left-[20%] w-[10vw] h-[2px] bg-blue-400/50 blur-[2px] origin-center will-change-transform" />
+      <div className="light-streak absolute top-[40%] right-[30%] w-[15vw] h-[3px] bg-indigo-500/40 blur-[4px] origin-center will-change-transform" />
+      <div className="light-streak absolute top-[60%] left-[10%] w-[8vw] h-[2px] bg-cyan-400/60 blur-[2px] origin-center will-change-transform" />
+      <div className="light-streak absolute top-[70%] right-[10%] w-[20vw] h-[4px] bg-purple-500/30 blur-[6px] origin-center will-change-transform" />
     </div>
   );
 }

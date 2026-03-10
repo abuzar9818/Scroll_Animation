@@ -45,42 +45,34 @@ export default function HeroSection() {
         );
       }
 
-      // 2. Scroll-Based Animation (Car) mapping to 3 distinct stages
-      // Set initial state of car off-screen left and slightly scaled down
+      // 2. Scroll-Based Forward Motion Animation (Car zooming in)
+      // Set initial state of car centered and slightly scaled back
       gsap.set(carWrapperRef.current, {
-        x: "-40vw",
+        x: "0vw",
+        y: 0,
         scale: 0.9,
         rotation: 0,
         opacity: 0.9,
       });
 
-      // Create a timeline linked to ScrollTrigger for the 3 stages
+      // Create a timeline linked to ScrollTrigger for the forward zoom effect
       const carTl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top top",      // Starts when the top of the container hits the top of the viewport
-          end: "+=2000",         // Pins for 2000px of scrolling for longer experience
-          scrub: 1,              // Smooth catching-up effect
-          pin: true,
+          start: "top top",
+          end: "+=1500",         // Duration of the scrub effect as page scrolls normally
+          scrub: 1,
         }
       });
 
-      // Stage 1/2: Move from left to center with scale/rotation
+      // Stage 1: Move car closer (forward illusion)
       carTl.to(carWrapperRef.current, {
-        x: "0vw",
-        scale: 1,
-        rotation: 1,
+        scale: 1.1,
+        y: 30,           // subtle vertical shift as it gets closer
+        rotation: 0.5,   // very slight tilt
         opacity: 1,
-        duration: 2,
+        duration: 1,
         ease: "power1.inOut"
-      })
-      // Stage 3: Continue moving slightly right and scale up
-      .to(carWrapperRef.current, {
-        x: "25vw",
-        scale: 1.05,
-        rotation: 0,
-        duration: 2,
-        ease: "power1.in"
       });
 
       // 3. Fade out text on scroll for a clean look
@@ -139,7 +131,7 @@ export default function HeroSection() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[50%] bg-blue-500/20 blur-[80px] rounded-full pointer-events-none" />
           
           <Image
-            src="/car.png"
+            src="/car-front.png"
             alt="Premium Scroll Object"
             fill
             priority
