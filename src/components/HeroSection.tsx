@@ -28,9 +28,9 @@ export default function HeroSection() {
       gsap.set(chars, { opacity: 0, y: 40 });
       gsap.set(statCards, { opacity: 0, y: 40 });
 
-      // Set initial car state off-screen left
+      // Set initial car state fully off-screen left
       gsap.set(carWrapperRef.current, {
-        x: "-40vw",
+        x: "-60vw",
         y: 0,
         scale: 0.9,
         rotation: 0,
@@ -42,40 +42,50 @@ export default function HeroSection() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",
-          end: "+=1800", // Pinned duration
+          end: "+=2200", // Pinned duration extended for slower, smoother motion
           scrub: 1,      // Smooth scrubbing
           pin: true,     // Pin the entire section
         }
       });
 
-      // Stage 1: Car entering from left to center
+      // Stage 1: Car entering slowly from left
       masterTl.to(carWrapperRef.current, {
-        x: "0vw",
-        scale: 1,
+        x: "-20vw",
+        scale: 0.95,
         duration: 2,
         ease: "power1.inOut"
       })
-      // Stage 2a: Text fades in while car is centered
-      .to(chars, {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        stagger: 0.05,
-        ease: "power3.out"
-      }, "+=0.2") // slight pause after car centers
-      // Stage 2b: Stats fade in right after text
-      .to(statCards, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.2,
-      }, "-=0.2") // overlap slightly with text finishing
-      // Stage 3: Car peels out to the right
-      .to(carWrapperRef.current, {
-        x: "50vw",
-        duration: 2,
-        ease: "power2.in"
-      }, "+=0.5"); // hold the full view for a moment before exiting
+
+        // Stage 2 Start: Car moving toward center slowly
+        .to(carWrapperRef.current, {
+          x: "10vw",
+          scale: 1,
+          duration: 2,
+          ease: "none"
+        })
+
+        // Stage 2 Sync: Text and stats fade in while car is moving across center
+        .to(chars, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.05,
+          ease: "power3.out"
+        }, "<") // Start at the same time as Stage 2 car movement
+        .to(statCards, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.2,
+        }, "<0.5") // Slightly overlap with text finishing
+
+        // Stage 3: Car peels out slowly to the right
+        .to(carWrapperRef.current, {
+          x: "40vw",
+          scale: 1.05,
+          duration: 2,
+          ease: "power1.inOut"
+        }, ">"); // Starts after previous text/car sync block finishes
 
     },
     { scope: containerRef }
@@ -90,7 +100,7 @@ export default function HeroSection() {
       <BackgroundParticles />
 
       {/* Foreground Content */}
-      <div className="relative z-20 flex flex-col items-center w-full max-w-7xl px-4 mt-[-5vh]">
+      <div className="relative z-30 flex flex-col items-center w-full max-w-7xl px-4 mt-[-5vh]">
         {/* Headline with staggered letter reveal */}
         <h1
           ref={textContainerRef}
@@ -112,14 +122,14 @@ export default function HeroSection() {
       </div>
 
       {/* Ground Floor Grid & Lighting */}
-      <div className="absolute inset-0 z-0 flex justify-center items-center pointer-events-none">
+      <div className="absolute inset-0 z-10 flex justify-center items-center pointer-events-none">
         {/* Deep radial glow behind the car centered */}
-        <div 
+        <div
           className="absolute w-[80vw] h-[80vh] rounded-full mix-blend-screen opacity-20"
           style={{ background: "radial-gradient(circle at center, rgba(0,150,255,1), transparent 70%)" }}
         />
         {/* Subtle floor grid/reflection at bottom */}
-        <div 
+        <div
           className="absolute bottom-0 w-full h-[30vh] opacity-10 origin-bottom"
           style={{
             backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
@@ -130,13 +140,13 @@ export default function HeroSection() {
       </div>
 
       {/* Main Visual Element (Car) */}
-      <div className="absolute bottom-10 w-full flex justify-center z-30 pointer-events-none overflow-visible">
+      <div className="absolute bottom-10 w-full flex justify-center z-20 pointer-events-none overflow-visible">
         <div
           ref={carWrapperRef}
           className="relative w-[80vw] md:w-[60vw] lg:w-[1000px] aspect-[21/9] will-change-transform flex-shrink-0"
         >
           <Image
-            src="/lambo-side.png"
+            src="/car.png"
             alt="Premium Scroll Object"
             fill
             priority
