@@ -45,27 +45,42 @@ export default function HeroSection() {
         );
       }
 
-      // 2. Scroll-Based Animation (Car entering from left to right center)
-      // First, set initial state of car out of view to the left and slightly scaled down
+      // 2. Scroll-Based Animation (Car) mapping to 3 distinct stages
+      // Set initial state of car off-screen left and slightly scaled down
       gsap.set(carWrapperRef.current, {
-        xPercent: -100, // Move 100% of its width to the left
-        scale: 0.8,
-        rotation: -2,
+        x: "-40vw",
+        scale: 0.85,
+        rotation: 0,
       });
 
-      // Then animate via scrub as the user scrolls
-      gsap.to(carWrapperRef.current, {
+      // Create a timeline linked to ScrollTrigger for the 3 stages
+      const carTl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",      // Starts when the top of the container hits the top of the viewport
-          end: "bottom top",     // Ends when the bottom of the container hits the top of the viewport
-          scrub: 1.5,            // Smooth catching-up effect
-        },
-        xPercent: 50,            // Move to the center (and beyond based on scroll)
-        y: 400,                  // Move downwards slightly as scrolling down
-        scale: 1.4,              // Scale up
-        rotation: 4,             // Rotate slightly
-        ease: "none",            // Scrub handles the easing
+          end: "bottom top",     // Ends when the section leaves the viewport entirely
+          scrub: 1,              // Smooth catching-up effect
+        }
+      });
+
+      // Stage 1: Move from left to center
+      carTl.to(carWrapperRef.current, {
+        x: "0vw",
+        duration: 2,
+        ease: "power1.inOut"
+      })
+      // Stage 2: Scale up and slight rotation (Zoom effect)
+      .to(carWrapperRef.current, {
+        scale: 1,
+        rotation: 2, // Slight rotate as it centers
+        duration: 1,
+        ease: "power2.out"
+      })
+      // Stage 3: Continue moving slightly right
+      .to(carWrapperRef.current, {
+        x: "20vw",
+        duration: 2,
+        ease: "power1.in"
       });
 
       // 3. Fade out text on scroll for a clean look
@@ -115,18 +130,23 @@ export default function HeroSection() {
       </div>
 
       {/* Main Visual Element (Car) */}
-      <div
-        ref={carWrapperRef}
-        className="absolute bottom-10 left-0 w-[80vw] md:w-[60vw] lg:w-[1000px] aspect-[21/9] z-30 pointer-events-none will-change-transform"
-      >
-        <Image
-          src="/car.png"
-          alt="Premium Scroll Object"
-          fill
-          priority
-          sizes="(max-width: 768px) 80vw, (max-width: 1200px) 60vw, 1000px"
-          className="object-contain filter drop-shadow-[0_30px_60px_rgba(0,0,0,0.9)]"
-        />
+      <div className="absolute bottom-10 w-full flex justify-center z-30 pointer-events-none overflow-visible">
+        <div
+          ref={carWrapperRef}
+          className="relative w-[80vw] md:w-[60vw] lg:w-[1000px] aspect-[21/9] will-change-transform flex-shrink-0"
+        >
+          {/* Subtle Glow Behind Car for Depth */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[50%] bg-blue-500/20 blur-[80px] rounded-full pointer-events-none" />
+          
+          <Image
+            src="/car.png"
+            alt="Premium Scroll Object"
+            fill
+            priority
+            sizes="(max-width: 768px) 80vw, (max-width: 1200px) 60vw, 1000px"
+            className="object-contain filter drop-shadow-[0_30px_60px_rgba(0,0,0,0.9)] relative z-10"
+          />
+        </div>
       </div>
 
       {/* Persistent Scroll Indicator */}
