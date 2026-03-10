@@ -30,8 +30,8 @@ export default function HeroSection() {
       if (chars && chars.length > 0) {
         tl.fromTo(
           chars,
-          { opacity: 0, y: 50 },
-          { opacity: 1, y: 0, duration: 1, stagger: 0.05, ease: "power4.out" }
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 1, stagger: 0.05, ease: "power3.out" }
         );
       }
 
@@ -49,8 +49,9 @@ export default function HeroSection() {
       // Set initial state of car off-screen left and slightly scaled down
       gsap.set(carWrapperRef.current, {
         x: "-40vw",
-        scale: 0.85,
+        scale: 0.8,
         rotation: 0,
+        opacity: 0.9,
       });
 
       // Create a timeline linked to ScrollTrigger for the 3 stages
@@ -58,27 +59,26 @@ export default function HeroSection() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",      // Starts when the top of the container hits the top of the viewport
-          end: "bottom top",     // Ends when the section leaves the viewport entirely
+          end: "+=1500",         // Pins for 1500px of scrolling for longer experience
           scrub: 1,              // Smooth catching-up effect
+          pin: true,
         }
       });
 
-      // Stage 1: Move from left to center
+      // Stage 1/2: Move from left to center with scale/rotation
       carTl.to(carWrapperRef.current, {
         x: "0vw",
+        scale: 1,
+        rotation: 1,
+        opacity: 1,
         duration: 2,
         ease: "power1.inOut"
       })
-      // Stage 2: Scale up and slight rotation (Zoom effect)
-      .to(carWrapperRef.current, {
-        scale: 1,
-        rotation: 2, // Slight rotate as it centers
-        duration: 1,
-        ease: "power2.out"
-      })
-      // Stage 3: Continue moving slightly right
+      // Stage 3: Continue moving slightly right and scale up
       .to(carWrapperRef.current, {
         x: "20vw",
+        scale: 1.05,
+        rotation: 0,
         duration: 2,
         ease: "power1.in"
       });
@@ -88,7 +88,7 @@ export default function HeroSection() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",
-          end: "center top",
+          end: "+=1000",
           scrub: true,
         },
         y: -100,
