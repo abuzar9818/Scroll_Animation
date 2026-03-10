@@ -39,8 +39,8 @@ export default function HeroSection() {
       if (statCards && statCards.length > 0) {
         tl.fromTo(
           statCards,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 0.8, stagger: 0.1 },
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 0.8, stagger: 0.2 },
           "-=0.5" // Start slightly before the last letter finishes
         );
       }
@@ -49,7 +49,7 @@ export default function HeroSection() {
       // Set initial state of car off-screen left and slightly scaled down
       gsap.set(carWrapperRef.current, {
         x: "-40vw",
-        scale: 0.8,
+        scale: 0.9,
         rotation: 0,
         opacity: 0.9,
       });
@@ -59,7 +59,7 @@ export default function HeroSection() {
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",      // Starts when the top of the container hits the top of the viewport
-          end: "+=1500",         // Pins for 1500px of scrolling for longer experience
+          end: "+=2000",         // Pins for 2000px of scrolling for longer experience
           scrub: 1,              // Smooth catching-up effect
           pin: true,
         }
@@ -76,7 +76,7 @@ export default function HeroSection() {
       })
       // Stage 3: Continue moving slightly right and scale up
       .to(carWrapperRef.current, {
-        x: "20vw",
+        x: "25vw",
         scale: 1.05,
         rotation: 0,
         duration: 2,

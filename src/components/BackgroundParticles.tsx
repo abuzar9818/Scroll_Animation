@@ -34,7 +34,7 @@ export default function BackgroundParticles() {
           end: "bottom bottom",
           scrub: 1, // Smooth scrub
         },
-        yPercent: (index + 1) * -40, // Moves upwards subtly against the scroll direction
+        y: -100, // Move slower than scroll exactly -100px up
         ease: "none",
       });
     });
