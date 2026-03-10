@@ -4,13 +4,13 @@
   "private": true,
   "homepage": "https://abuzar9818.github.io/Scroll_Animation",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "predeploy": "next build && next export",
-    "deploy": "gh-pages -d out"
-  },
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "lint": "next lint",
+  "predeploy": "next build",
+  "deploy": "gh-pages -d out"
+},
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "@studio-freight/react-lenis": "^0.0.47",
