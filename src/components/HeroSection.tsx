@@ -19,73 +19,63 @@ export default function HeroSection() {
 
   useGSAP(
     () => {
-      // 1. Initial Load Animation Timeline
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      // Unified Scroll-Driven Timeline for Lambo and Text
+      // 1. Initial Styles
+      const chars = textContainerRef.current?.querySelectorAll(".headline-char") || [];
+      const statCards = containerRef.current?.querySelectorAll(".stat-card") || [];
 
-      // Identify elements
-      const chars = textContainerRef.current?.querySelectorAll(".headline-char");
-      const statCards = containerRef.current?.querySelectorAll(".stat-card");
-      
-      // Animate headline letters in with stagger
-      if (chars && chars.length > 0) {
-        tl.fromTo(
-          chars,
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 1, stagger: 0.05, ease: "power3.out" }
-        );
-      }
+      // Hide text initially
+      gsap.set(chars, { opacity: 0, y: 40 });
+      gsap.set(statCards, { opacity: 0, y: 40 });
 
-      // Animate statistics cards sequentially after text
-      if (statCards && statCards.length > 0) {
-        tl.fromTo(
-          statCards,
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 0.8, stagger: 0.2 },
-          "-=0.5" // Start slightly before the last letter finishes
-        );
-      }
-
-      // 2. Scroll-Based Forward Motion Animation (Car zooming in)
-      // Set initial state of car centered and slightly scaled back
+      // Set initial car state off-screen left
       gsap.set(carWrapperRef.current, {
-        x: "0vw",
+        x: "-40vw",
         y: 0,
         scale: 0.9,
         rotation: 0,
-        opacity: 0.9,
+        opacity: 1, // solid car
       });
 
-      // Create a timeline linked to ScrollTrigger for the forward zoom effect
-      const carTl = gsap.timeline({
+      // 2. Build Master Scroll Timeline
+      const masterTl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",
-          end: "+=1500",         // Duration of the scrub effect as page scrolls normally
-          scrub: 1,
+          end: "+=1800", // Pinned duration
+          scrub: 1,      // Smooth scrubbing
+          pin: true,     // Pin the entire section
         }
       });
 
-      // Stage 1: Move car closer (forward illusion)
-      carTl.to(carWrapperRef.current, {
-        scale: 1.1,
-        y: 30,           // subtle vertical shift as it gets closer
-        rotation: 0.5,   // very slight tilt
-        opacity: 1,
-        duration: 1,
+      // Stage 1: Car entering from left to center
+      masterTl.to(carWrapperRef.current, {
+        x: "0vw",
+        scale: 1,
+        duration: 2,
         ease: "power1.inOut"
-      });
-
-      // 3. Fade out text on scroll for a clean look
-      gsap.to([textContainerRef.current, ".stats-container"], {
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "+=1000",
-          scrub: true,
-        },
-        y: -100,
-        opacity: 0,
-      });
+      })
+      // Stage 2a: Text fades in while car is centered
+      .to(chars, {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        stagger: 0.05,
+        ease: "power3.out"
+      }, "+=0.2") // slight pause after car centers
+      // Stage 2b: Stats fade in right after text
+      .to(statCards, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        stagger: 0.2,
+      }, "-=0.2") // overlap slightly with text finishing
+      // Stage 3: Car peels out to the right
+      .to(carWrapperRef.current, {
+        x: "50vw",
+        duration: 2,
+        ease: "power2.in"
+      }, "+=0.5"); // hold the full view for a moment before exiting
 
     },
     { scope: containerRef }
@@ -121,17 +111,32 @@ export default function HeroSection() {
         <StatsSection />
       </div>
 
+      {/* Ground Floor Grid & Lighting */}
+      <div className="absolute inset-0 z-0 flex justify-center items-center pointer-events-none">
+        {/* Deep radial glow behind the car centered */}
+        <div 
+          className="absolute w-[80vw] h-[80vh] rounded-full mix-blend-screen opacity-20"
+          style={{ background: "radial-gradient(circle at center, rgba(0,150,255,1), transparent 70%)" }}
+        />
+        {/* Subtle floor grid/reflection at bottom */}
+        <div 
+          className="absolute bottom-0 w-full h-[30vh] opacity-10 origin-bottom"
+          style={{
+            backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+            backgroundSize: "3rem 3rem",
+            transform: "perspective(1000px) rotateX(80deg)"
+          }}
+        />
+      </div>
+
       {/* Main Visual Element (Car) */}
       <div className="absolute bottom-10 w-full flex justify-center z-30 pointer-events-none overflow-visible">
         <div
           ref={carWrapperRef}
           className="relative w-[80vw] md:w-[60vw] lg:w-[1000px] aspect-[21/9] will-change-transform flex-shrink-0"
         >
-          {/* Subtle Glow Behind Car for Depth */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[50%] bg-blue-500/20 blur-[80px] rounded-full pointer-events-none" />
-          
           <Image
-            src="/car-front.png"
+            src="/lambo-side.png"
             alt="Premium Scroll Object"
             fill
             priority
