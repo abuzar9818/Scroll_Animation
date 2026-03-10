@@ -28,11 +28,11 @@ export default function HeroSection() {
       gsap.set(chars, { opacity: 0, y: 40 });
       gsap.set(statCards, { opacity: 0, y: 40 });
 
-      // Set initial car state fully off-screen left
+      // Set initial car state partially visible left
       gsap.set(carWrapperRef.current, {
-        x: "-70vw",
+        x: "-35vw",
         y: 0,
-        scale: 0.9,
+        scale: 0.95,
         rotation: 0,
         opacity: 1, // solid car
       });
@@ -48,10 +48,10 @@ export default function HeroSection() {
         }
       });
 
-      // Stage 1: Car entering slowly from left
+      // Stage 1: Car slowly enters the scene
       masterTl.to(carWrapperRef.current, {
-        x: "0vw",
-        scale: 0.95,
+        x: "-5vw",
+        scale: 1,
         rotation: 0.5, // Simulate very slight suspension bump on entry
         duration: 2,
         ease: "power1.inOut"
@@ -59,7 +59,7 @@ export default function HeroSection() {
 
         // Stage 2 Start: Car reaches the center area
         .to(carWrapperRef.current, {
-          x: "5vw",
+          x: "15vw",
           scale: 1,
           rotation: 0, // leveling out
           duration: 2,
@@ -92,7 +92,7 @@ export default function HeroSection() {
 
         // Stage 4: Car settles toward the right side
         .to(carWrapperRef.current, {
-          x: "50vw",
+          x: "37vw",
           rotation: 0, // flatten out completely at the end
           duration: 1.5,
           ease: "power2.out"
@@ -151,10 +151,10 @@ export default function HeroSection() {
       </div>
 
       {/* Main Visual Element (Car) */}
-      <div className="absolute bottom-10 w-full flex justify-center z-20 pointer-events-none overflow-visible">
+      <div className="absolute bottom-[10vh] left-1/2 -translate-x-1/2 flex justify-center z-20 pointer-events-none overflow-visible w-[60vw] max-w-[1100px]">
         <div
           ref={carWrapperRef}
-          className="relative w-[80vw] md:w-[60vw] lg:w-[1000px] aspect-[21/9] will-change-transform flex-shrink-0"
+          className="relative w-full aspect-[21/9] will-change-transform flex-shrink-0"
         >
           <Image
             src="/car.png"
